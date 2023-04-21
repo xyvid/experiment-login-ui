@@ -33,6 +33,7 @@
 	},
 	"type": "module",
 	"dependencies": {
-		"sk-auth": "^0.4.1"
+		"sk-auth": "^0.4.1",
+		"svelte-dialogs": "^1.2.2"
 	}
 }

@@ -1,0 +1,46 @@
+
+
+import { persisted } from 'svelte-local-storage-store';
+
+
+
+
+
+export const session = persisted('session', {});
+export const isLoggedIn = persisted('isLoggedIn', false);
+export const loadSession = (sessionJson) => {
+
+    var user = {
+   
+        first_name: sessionJson.firstName,
+        last_name: sessionJson.lastName,
+        username: sessionJson.username,
+        id: sessionJson.id,
+        token: sessionJson.token,
+        refresh_token: sessionJson.refreshToken
+     
+     };
+    isLoggedIn.set(true);
+    session.set(user);
+};
+
+export const removeSession = () => {
+    // stop using the store
+    session.set({});
+   
+  
+    isLoggedIn.set(false);
+    // remove from local storage
+    localStorage.removeItem('session')
+  }
+
+export const clearSession = () => {
+
+
+
+isLoggedIn.set(false);
+    session.set({});
+};
+
+
+

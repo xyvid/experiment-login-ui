@@ -1,0 +1,62 @@
+import {writable} from 'svelte/store';
+import  {session} from '../stores/sessionStore';
+import { goto } from '$app/navigation';
+
+export const users = writable ([]);
+
+let loaded = false;
+
+export const loadUsers = ( usersJson) => {
+    if (loaded) return;
+    
+
+
+  const value =   usersJson.map((usersJson, index) => 
+    ({
+
+    first_name: usersJson.firstName,
+    last_name: usersJson.lastName,
+    username: usersJson.username,
+    id: usersJson.id
+ 
+ }));
+
+console.log(value);
+
+    users.set(value ); 
+     loaded  = true;
+
+
+};
+export const user = writable ([]);
+export  const loadUser = async(id, sessionval) => {
+	
+console.log(sessionval);
+
+
+
+    const res = await fetch(`http://localhost:4000/Users/${id}`,{
+        method: 'get',
+        credentials: "include",
+        headers: {  'Content-Type': 'application/json'}});
+
+   
+
+    const userJson = await res.json();
+    user.set(  {
+   
+        first_name: userJson.firstName,
+        last_name: userJson.lastName,
+        username: userJson.username,
+        id: userJson.id,
+    
+     
+    });
+  
+
+
+
+
+    
+};
+
