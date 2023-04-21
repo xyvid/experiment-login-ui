@@ -34,6 +34,7 @@
 	"type": "module",
 	"dependencies": {
 		"sk-auth": "^0.4.1",
-		"svelte-dialogs": "^1.2.2"
+		"svelte-dialogs": "^1.2.2",
+		"svelte-local-storage-store": "^0.4.0"
 	}
 }
