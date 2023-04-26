@@ -1,6 +1,7 @@
 import {writable} from 'svelte/store';
 import  {session} from '../stores/sessionStore';
 import { goto } from '$app/navigation';
+import { AuthFetch } from '../lib/AuthFetch';
 
 export const users = writable ([]);
 
@@ -29,16 +30,15 @@ console.log(value);
 
 };
 export const user = writable ([]);
-export  const loadUser = async(id, sessionval) => {
+export  const loadUser = async(id) => {
 	
-console.log(sessionval);
 
 
 
-    const res = await fetch(`http://localhost:4000/Users/${id}`,{
+
+    const res = await AuthFetch({
         method: 'get',
-        credentials: "include",
-        headers: {  'Content-Type': 'application/json'}});
+        headers: {  'Content-Type': 'application/json'}}, `/Users/${id}`);
 
    
 
@@ -49,7 +49,7 @@ console.log(sessionval);
         last_name: userJson.lastName,
         username: userJson.username,
         id: userJson.id,
-    
+   
      
     });
   

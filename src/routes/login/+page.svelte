@@ -1,7 +1,7 @@
 <script>
 
-	//import { AuthFetch } from '../../lib/AuthFetch';
-	import { sveltekit } from '@sveltejs/kit/vite';
+	import { AuthFetch } from '../../lib/AuthFetch';
+	//import { sveltekit } from '@sveltejs/kit/vite';
 
 import  {loadSession, session, removeSession} from '../../stores/sessionStore';
 import { dialogs } from "svelte-dialogs";
@@ -20,11 +20,13 @@ import { goto } from '$app/navigation';
             const requestOptions = {
                 method: 'post',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ Username: email, Password: password }),
-                URL: config.APIUrl + '/Users/authenticate'
+                body: JSON.stringify({ Username: email, Password: password })
+                
+                
             };
-           const res =   await fetch(requestOptions);
-          
+            const url =  '/Users/authenticate';
+           const res =   await AuthFetch(requestOptions, url);
+        
           const result = await res.json();
 
           

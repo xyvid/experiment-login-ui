@@ -6,17 +6,18 @@ import { onMount } from 'svelte';
   import  {session} from '../../stores/sessionStore';
   import  {users, loadUsers} from '../../stores/usersStore';
   import { dialogs } from "svelte-dialogs";
+  import {AuthFetch} from "../../lib/AuthFetch"
  onMount(async () => {
 
 
     let auth = $session.token;
 
     console.log(auth);
-  const res2 = await fetch('http://localhost:4000/Users',{
-        method: 'get',
-    
-        headers: {  'Content-Type': 'application/json',  Authorization: auth},
-    });
+const request = { method:  'get',
+                  headers: {  'Content-Type': 'application/json'}}
+  
+
+  const res2 = await AuthFetch( request,'/Users'  );
 
 
      let usersjson =  await res2.json();

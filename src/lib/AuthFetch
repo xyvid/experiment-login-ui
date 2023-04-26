@@ -1,10 +1,13 @@
 
-/*import  {session, loadSession, clearSession} from '/src/stores/sessionStore';
-import type { RequestEvent } from "@sveltejs/kit/types/hooks";
+import  {session, loadSession, clearSession} from '/src/stores/sessionStore';
+
+import {writable, get} from 'svelte/store';
+import { config } from "../global";
+//import type { RequestEvent } from "@sveltejs/kit/types/hooks";
 
 import { goto } from '$app/navigation';
 
-export const getTokenData = (jwt: string): any => {
+export  function getTokenData(jwt) {
   let data;
   try {
     data = JSON.parse(Buffer.from(jwt.split(".")[1], "base64").toString());
@@ -19,8 +22,11 @@ export const getTokenData = (jwt: string): any => {
   return data;
 };
 
-export function isTokenExpired(jwt: string): boolean {
+export function isTokenExpired(jwt) {
+  
+  console.log(jwt);
   if (!jwt || jwt.length < 10) {
+    console.log("Invalide");
     return true;
   }
   const tokenTimeSkew = 10; // 10 seconds before actual token exp
@@ -30,16 +36,72 @@ export function isTokenExpired(jwt: string): boolean {
   const expirationTime = data?.exp || 0 - tokenTimeSkew;
   const isExpired = now > expirationTime;
   return isExpired;
-}*/
-
-/*
-
-export async function AuthFetch({ request }: { request; }) {
-  console.log(request.url);
-if(request.url.includes('authenticate') || request.url.includes('refreshToken') )
-{
-
-  console.log("Authentication Call");
-  return fetch(request);
 }
-};*/
+
+
+export async function AuthFetch(request,  url) {
+
+
+  url = config.APIUrl + url ;
+if(url.includes('authenticate') )
+{
+  console.log("Authentication Call");
+  return await fetch(url,request);
+}
+else if(url.includes('RefreshToken'))
+{
+  console.log("Refresh Call");
+  return   await fetch(url,request);
+
+
+
+}
+
+var sessionValue = get(session);
+console.log(sessionValue);
+
+if(!isTokenExpired(sessionValue.token)){
+
+
+  console.log(request);
+  request.headers = {'Content-Type':'application/json', 'credentials': 'include' ,'Authorization': sessionValue.token};
+  console.log("Regular Call");
+  console.log(request);
+  return await fetch(url, request);
+}
+else
+{
+  const requestOptions = {
+    method: 'post',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ Token: sessionValue.token, RefreshToken: sessionValue.refresh_token })
+
+  };
+  const res =  await AuthFetch(requestOptions, '/Users/RefreshToken' );
+
+
+  if(res.ok)
+  {
+
+    console.log("Failed The Refesh Call");
+    const result = await res.json();
+    await loadSession(result);
+
+    console.log("Token Is Refreshed, Lets Try This Again");
+    console.log(request);
+    request.headers = {'Content-Type':'application/json', 'credentials': 'include' ,'Authorization': get(session).token};
+    console.log("Regular Call");
+    console.log(request);
+    return await fetch(url, request);
+  }
+  else
+  {
+    console.log("Failed The Refesh Call");
+    clearSession();
+    goto("/login");
+  }
+
+
+}
+}
+   
