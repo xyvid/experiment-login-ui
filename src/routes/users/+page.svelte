@@ -7,14 +7,16 @@ import { onMount } from 'svelte';
   import  {users, loadUsers} from '../../stores/usersStore';
   import { dialogs } from "svelte-dialogs";
   import {AuthFetch} from "../../lib/AuthFetch"
+  import {XyvidConfirm} from "../../lib/AlertPrompt.ts"
+  import {Avatar } from  '@skeletonlabs/skeleton';
+  
  onMount(async () => {
 
 
     let auth = $session.token;
 
     console.log(auth);
-const request = { method:  'get',
-                  headers: {  'Content-Type': 'application/json'}}
+const request = { method:  'get'}
   
 
   const res2 = await AuthFetch( request,'/Users'  );
@@ -29,12 +31,37 @@ const request = { method:  'get',
 
     
   });
-	async function  handleDelete(idtodelete) {
-		if(await dialogs.confirm('Are you sure you want to delete this?'))
+
+  function bar(success) {
+
+    if(success)
+    {
+      console.log('bar() function called Success!');
+    }
+    else
+    {
+      console.log('bar() function called Failed!');
+    }
+  return Math.random();
+}
+    
+  async function  handleDelete(idtodelete) {
+		
+    XyvidConfirm('Confirm','Are you sure you want to delete this?', function(success){
+    if(success)
     {
       $users = $users.filter(item=> item.id !== idtodelete);
     }
     }
+    
+    );
+    
+    if(await dialogs.confirm())
+    {
+
+    }
+  };
+    
 
 
 	
@@ -50,12 +77,13 @@ const request = { method:  'get',
   {#if $users != ''}
     {#each $users as user}
  <div >
+   
+  <a class=" block card card-hover p-4" href={`/users/${user.id}`}>
     <div class="items-right float-right">
 
-  <button type="button"  on:click={()=> handleDelete(user.id)} class="focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 hover:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900">X</button>
-  </div>
-  <a class="  p-6 bg-gray-100 text-gray-800 text-center round-md shadow-sm hover:shadow-lg flex flex-col items-center" href={`/users/${user.id}`}>
-    <img src='src/files/person-placeholder-portrait.png' alt="UserImage"/>
+      <button type="button"  on:click|preventDefault={()=> handleDelete(user.id)} class="btn btn-sm variant-filled">X</button>
+      </div>
+    <Avatar src='src/files/person-placeholder-portrait.png' width="w-" />
 	
     <h2> {user.first_name} {user.last_name} </h2>
     <h3>{user.username}</h3>

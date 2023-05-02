@@ -13,7 +13,7 @@
   
     console.log(Number(id));
 
-    loadUser(Number(id), $session);
+    loadUser(Number(id));
   });
 </script>
 <h1 class="mt-6 text-center text-3xl font-bold tracking-tight text-gray-900"><a href="../users/"> Back</a></h1>

@@ -46,7 +46,24 @@ export async function AuthFetch(request,  url) {
 if(url.includes('authenticate') )
 {
   console.log("Authentication Call");
-  return await fetch(url,request);
+
+
+   const res = await fetch(url,request);
+
+   if(res.ok)
+   {  
+
+
+    const result =  await res.json();
+     loadSession(result);
+
+
+      return "Success";
+   }
+   else
+   {
+      return "Failed";
+   }
 }
 else if(url.includes('RefreshToken'))
 {
